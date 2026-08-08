@@ -6,7 +6,7 @@ until you answer on your phone, then gets the answer + your reason back.
 
 Setup:
     export CHECKPOINT_URL="https://your-app.onrender.com"   # or http://localhost:8000
-    export CHECKPOINT_KEY="your-secret-key"
+    export CHECKPOINT_KEY="gbiE5wRBcgdhuhgnpHBSHRbSc67iQgRH9-jIV8Pa_mk"
 
 Usage from an agent:
 
@@ -39,7 +39,7 @@ import time
 import requests
 
 BASE = os.environ.get("CHECKPOINT_URL", "http://localhost:8000").rstrip("/")
-KEY = os.environ.get("CHECKPOINT_KEY", "change-me")
+KEY = os.environ.get("CHECKPOINT_KEY", "gbiE5wRBcgdhuhgnpHBSHRbSc67iQgRH9-jIV8Pa_mk")
 HEADERS = {"X-API-Key": KEY}
 
 

@@ -6,7 +6,7 @@ Agents POST questions here. Your phone answers them. Agents poll for the answer.
 Run locally:   python main.py          (then open http://YOUR-COMPUTER-IP:8000 on your phone)
 Deploy:        works as-is on Render / Railway / Fly (start command: python main.py)
 
-Auth: set the CHECKPOINT_KEY environment variable (defaults to "change-me").
+Auth: set the CHECKPOINT_KEY environment variable (defaults to the fleet key).
 Both your agents and your phone use this same key.
 """
 
@@ -22,7 +22,7 @@ from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-API_KEY = os.environ.get("CHECKPOINT_KEY", "change-me")
+API_KEY = os.environ.get("CHECKPOINT_KEY", "gbiE5wRBcgdhuhgnpHBSHRbSc67iQgRH9-jIV8Pa_mk")
 DB_PATH = os.environ.get("CHECKPOINT_DB", "checkpoints.db")
 PORT = int(os.environ.get("PORT", 8000))
 
