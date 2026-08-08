@@ -1,0 +1,11 @@
+{
+  "name": "Checkpoint",
+  "short_name": "Checkpoint",
+  "display": "standalone",
+  "start_url": "/",
+  "background_color": "#08090F",
+  "theme_color": "#08090F",
+  "icons": [
+    { "src": "/icon.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

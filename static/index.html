@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+<title>Checkpoint</title>
+<link rel="manifest" href="/manifest.json" />
+<link rel="apple-touch-icon" href="/icon.png" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="theme-color" content="#08090F" />
+<style>
+  :root {
+    --bg:#08090F; --raise:#0D0F17;
+    --glass:rgba(255,255,255,0.045); --stroke:rgba(255,255,255,0.08);
+    --ink:#EEEFF5; --soft:#9A9DB3; --faint:#5C5F75;
+    --indigo:#8B8DF6; --violet:#A78BFA;
+    --green:#5FD49A; --greendim:rgba(95,212,154,0.12);
+    --coral:#F0857D; --coraldim:rgba(240,133,125,0.10);
+  }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; margin:0; }
+  html,body { height:100%; }
+  body {
+    background: radial-gradient(120% 60% at 50% 0%, #12142266 0%, transparent 60%), var(--bg);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    display:flex; justify-content:center;
+    overscroll-behavior:none;
+  }
+  #app { width:100%; max-width:430px; height:100dvh; display:flex; flex-direction:column; }
+  #screen { flex:1; overflow-y:auto; padding:max(20px, env(safe-area-inset-top)) 20px 8px; }
+
+  .fadein { animation:fadein .42s cubic-bezier(.22,1,.36,1); }
+  @keyframes fadein { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
+  @keyframes breathe { 0%,100%{transform:scale(1);opacity:.92} 50%{transform:scale(1.07);opacity:1} }
+  @keyframes pop { 0%{transform:scale(.6);opacity:0} 60%{transform:scale(1.08)} 100%{transform:scale(1);opacity:1} }
+  @media (prefers-reduced-motion: reduce){ .orb{animation:none !important} }
+
+  .orb { border-radius:50%; position:relative; animation:breathe 3.2s ease-in-out infinite; flex-shrink:0; }
+  .orb::after { content:''; position:absolute; inset:0; border-radius:50%; border:2px solid var(--hue,var(--indigo));
+    box-shadow:0 0 26px color-mix(in srgb, var(--hue,var(--indigo)) 40%, transparent),
+               inset 0 0 12px color-mix(in srgb, var(--hue,var(--indigo)) 25%, transparent); }
+
+  .eyebrow { font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:var(--faint); font-weight:600; }
+  .glass { background:var(--glass); border:1px solid var(--stroke); border-radius:20px; padding:18px;
+    backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); }
+
+  .chip { display:inline-flex; align-items:center; gap:8px; padding:6px 12px 6px 8px; border-radius:999px;
+    background:var(--glass); border:1px solid var(--stroke); font-size:12px; color:var(--soft); font-weight:600; }
+  .chip .dot { width:8px; height:8px; border-radius:50%; background:var(--hue,var(--indigo));
+    box-shadow:0 0 8px var(--hue,var(--indigo)); }
+
+  .bigbtn { flex:1; padding:18px 12px; border-radius:18px; border:none; font:inherit; font-size:16.5px;
+    font-weight:700; cursor:pointer; transition:transform .12s ease; }
+  .bigbtn:active { transform:scale(.965); }
+  .bigbtn:focus-visible { outline:2px solid var(--indigo); outline-offset:2px; }
+  .yes { background:var(--greendim); color:var(--green); }
+  .no  { background:var(--coraldim); color:var(--coral); }
+  .primary { background:rgba(139,141,246,.2); color:var(--indigo); box-shadow:0 0 30px rgba(139,141,246,.13); }
+  .ghost { background:var(--glass); color:var(--soft); border:1px solid var(--stroke); }
+
+  textarea { width:100%; min-height:110px; background:var(--glass); border:1px solid var(--stroke);
+    border-radius:16px; color:var(--ink); font:inherit; font-size:16px; padding:14px; resize:none; }
+  textarea:focus { outline:none; border-color:rgba(139,141,246,.5); }
+
+  nav { display:flex; border-top:1px solid var(--stroke); background:rgba(10,11,17,.85);
+    backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+    padding:10px 8px calc(14px + env(safe-area-inset-bottom)); }
+  nav button { flex:1; background:none; border:none; cursor:pointer; display:flex; flex-direction:column;
+    align-items:center; gap:4px; color:var(--faint); font:inherit; position:relative; }
+  nav button.on { color:var(--indigo); }
+  nav button .ic { font-size:18px; }
+  nav button .lb { font-size:10.5px; font-weight:600; letter-spacing:.03em; }
+  .badge { position:absolute; top:-2px; right:calc(50% - 18px); width:16px; height:16px; border-radius:50%;
+    background:var(--coral); color:#fff; font-size:10px; font-weight:700; display:flex;
+    align-items:center; justify-content:center; }
+
+  .center-col { height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; }
+  .q { font-size:31px; line-height:1.22; font-weight:600; letter-spacing:-.02em; text-align:center; }
+  input.setup { width:100%; background:var(--glass); border:1px solid var(--stroke); border-radius:14px;
+    color:var(--ink); font:inherit; font-size:16px; padding:14px; }
+  input.setup:focus { outline:none; border-color:rgba(139,141,246,.5); }
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="screen"></div>
+  <nav id="nav"></nav>
+</div>
+
+<script>
+/* ============ Checkpoint phone app — talks to the real API ============ */
+
+const HUES = {}; // agent name -> color, assigned round-robin
+const PALETTE = ['#8B8DF6','#5FC9D4','#C99BF4','#F4B65F','#6FD48B','#F0857D'];
+function hueFor(agent){
+  if(!HUES[agent]) HUES[agent] = PALETTE[Object.keys(HUES).length % PALETTE.length];
+  return HUES[agent];
+}
+
+const S = {
+  key: localStorage.getItem('cp_key') || '',
+  tab: 'checkpoint',
+  view: 'list',           // list | question | reason | done | setup
+  pending: [],
+  history: [],
+  active: null,
+  doneNote: '',
+  pollTimer: null,
+  err: '',
+};
+
+const $screen = document.getElementById('screen');
+const $nav = document.getElementById('nav');
+
+async function api(path, opts={}){
+  const res = await fetch(path, {
+    ...opts,
+    headers: { 'Content-Type':'application/json', 'X-API-Key': S.key, ...(opts.headers||{}) },
+  });
+  if(res.status === 401){ S.view='setup'; render(); throw new Error('auth'); }
+  if(!res.ok) throw new Error(await res.text());
+  return res.json();
+}
+
+async function refresh(){
+  try{
+    const [p, all] = await Promise.all([
+      api('/api/checkpoints?status=pending'),
+      api('/api/checkpoints?status=all'),
+    ]);
+    S.pending = p.checkpoints;
+    S.history = all.checkpoints.filter(c=>c.status==='answered');
+    S.err = '';
+  }catch(e){ if(e.message!=='auth') S.err = 'Can\u2019t reach the server.'; }
+  render();
+}
+
+function startPolling(){
+  clearInterval(S.pollTimer);
+  S.pollTimer = setInterval(refresh, 12000);
+  refresh();
+}
+
+async function submitAnswer(cp, answer, reason=''){
+  await api(`/api/checkpoints/${cp.id}/answer`, { method:'POST', body: JSON.stringify({answer, reason}) });
+  S.doneNote = `${cp.agent} has your answer.`;
+  S.view = 'done'; S.active = cp;
+  render();
+  setTimeout(()=>{ S.view='list'; S.active=null; refresh(); }, 1800);
+}
+
+/* ---------------- rendering ---------------- */
+
+function h(html){ const d=document.createElement('div'); d.innerHTML=html.trim(); return d.firstChild; }
+function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function orb(size, hue){ return `<div class="orb" style="width:${size}px;height:${size}px;--hue:${hue};
+  background:radial-gradient(circle at 35% 30%, ${hue}33, transparent 62%)"></div>`; }
+
+function chip(agent){ const hue=hueFor(agent);
+  return `<span class="chip" style="--hue:${hue}"><span class="dot"></span>${esc(agent)}</span>`; }
+
+function render(){
+  renderNav();
+  if(S.view==='setup') return renderSetup();
+  if(S.tab==='checkpoint'){
+    if(S.view==='question' && S.active) return renderQuestion(S.active);
+    if(S.view==='reason' && S.active) return renderReason(S.active);
+    if(S.view==='done' && S.active) return renderDone();
+    return renderList();
+  }
+  if(S.tab==='history') return renderHistory();
+}
+
+function renderNav(){
+  const tabs=[['checkpoint','◉','Checkpoint'],['history','◔','History']];
+  $nav.innerHTML = tabs.map(([k,ic,lb])=>`
+    <button class="${S.tab===k?'on':''}" onclick="setTab('${k}')">
+      <span class="ic">${ic}</span><span class="lb">${lb}</span>
+      ${k==='checkpoint'&&S.pending.length?`<span class="badge">${S.pending.length}</span>`:''}
+    </button>`).join('');
+}
+function setTab(k){ S.tab=k; S.view='list'; S.active=null; render(); }
+
+function renderSetup(){
+  $screen.innerHTML = `
+    <div class="center-col fadein" style="gap:22px">
+      ${orb(56,'#8B8DF6')}
+      <div style="font-size:22px;font-weight:600">Connect to your server</div>
+      <div style="font-size:14px;color:var(--soft);text-align:center;max-width:260px;line-height:1.5">
+        Enter the API key you set on the server (CHECKPOINT_KEY).
+      </div>
+      <input class="setup" id="keyinput" type="password" placeholder="API key" value="${esc(S.key)}" />
+      <button class="bigbtn primary" style="width:100%" onclick="saveKey()">Connect</button>
+      <div style="font-size:13px;color:var(--coral)">${esc(S.err)}</div>
+    </div>`;
+}
+function saveKey(){
+  S.key = document.getElementById('keyinput').value.trim();
+  localStorage.setItem('cp_key', S.key);
+  S.view='list';
+  startPolling();
+}
+
+function renderList(){
+  if(S.err){
+    $screen.innerHTML = `<div class="center-col fadein">${orb(56,'#F0857D')}
+      <div style="font-size:18px;font-weight:600">Server unreachable</div>
+      <div style="font-size:13.5px;color:var(--soft)">${esc(S.err)} Retrying…</div>
+      <button class="bigbtn ghost" onclick="S.view='setup';render()" style="flex:none;padding:12px 22px;font-size:14px">Change key</button>
+    </div>`;
+    return;
+  }
+  if(!S.pending.length){
+    $screen.innerHTML = `<div class="center-col fadein">${orb(56,'#8B8DF6')}
+      <div style="font-size:20px;font-weight:600">All clear.</div>
+      <div style="font-size:14px;color:var(--soft);text-align:center;max-width:240px;line-height:1.5">
+        No decisions need you right now. Your agents will ask when something does.
+      </div></div>`;
+    return;
+  }
+  const first = S.pending[0];
+  S.active = first; S.view='question';
+  renderQuestion(first);
+}
+
+function renderQuestion(cp){
+  const hue = hueFor(cp.agent);
+  const isVerify = cp.kind==='verify' || !cp.options.length;
+  const rest = S.pending.length-1;
+  $screen.innerHTML = `
+    <div class="fadein" style="display:flex;flex-direction:column;height:100%">
+      <div style="display:flex;justify-content:center;padding-top:8px">${orb(52,hue)}</div>
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:20px;padding:0 6px">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:12px">
+          ${chip(cp.agent)}
+          <div class="eyebrow">${isVerify?'Check-in':'Needs your call'}</div>
+        </div>
+        <h1 class="q">${esc(cp.question)}</h1>
+        <div style="text-align:center">
+          ${cp.context?`<div style="font-size:14px;color:var(--soft);font-weight:500">${esc(cp.context)}</div>`:''}
+        </div>
+        ${isVerify ? `
+          <div style="display:flex;gap:12px;margin-top:6px">
+            <button class="bigbtn yes" onclick="answerYes()">✓&nbsp;&nbsp;Yes</button>
+            <button class="bigbtn no" onclick="goReason()">✕&nbsp;&nbsp;No</button>
+          </div>` : `
+          <div style="display:flex;flex-direction:column;gap:10px;margin-top:6px">
+            ${cp.options.map((o,i)=>`<button class="bigbtn ${i===0?'primary':'ghost'}" style="width:100%"
+              onclick="answerOption(${i})">${esc(o)}</button>`).join('')}
+          </div>`}
+      </div>
+      ${rest>0?`<div class="glass" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+        <div><div class="eyebrow">Up next</div>
+        <div style="font-size:14.5px;font-weight:600;margin-top:5px">${rest} more decision${rest>1?'s':''} waiting</div></div>
+        <span style="color:var(--faint);font-size:20px">›</span></div>`:''}
+    </div>`;
+}
+function answerYes(){ submitAnswer(S.active,'yes'); }
+function answerOption(i){ submitAnswer(S.active, S.active.options[i]); }
+function goReason(){ S.view='reason'; render(); }
+
+function renderReason(){
+  const cp=S.active, hue=hueFor(cp.agent);
+  $screen.innerHTML = `
+    <div class="fadein" style="display:flex;flex-direction:column;height:100%;align-items:center">
+      <div style="padding-top:8px">${orb(44,hue)}</div>
+      <div style="margin-top:36px;text-align:center">
+        <div class="eyebrow">${esc(cp.reason_prompt||'What got in the way?')}</div>
+        <div style="font-size:15px;color:var(--soft);margin-top:10px;max-width:270px;line-height:1.5">
+          Help ${esc(cp.agent)} understand so it can adjust the plan.
+        </div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:center;width:100%;gap:14px">
+        <textarea id="reason" placeholder="Type it, or use the mic key on your keyboard…"></textarea>
+      </div>
+      <div style="display:flex;gap:12px;width:100%;padding-bottom:6px">
+        <button class="bigbtn ghost" onclick="S.view='question';render()">Back</button>
+        <button class="bigbtn primary" style="flex:1.4" onclick="sendReason()">Send to ${esc(cp.agent)}</button>
+      </div>
+    </div>`;
+  document.getElementById('reason').focus();
+}
+function sendReason(){
+  const reason = document.getElementById('reason').value.trim();
+  submitAnswer(S.active,'no',reason);
+}
+
+function renderDone(){
+  $screen.innerHTML = `
+    <div class="center-col fadein" style="gap:20px">
+      <div style="width:84px;height:84px;border-radius:50%;border:2px solid var(--green);
+        display:flex;align-items:center;justify-content:center;box-shadow:0 0 44px rgba(95,212,154,.27);
+        animation:pop .5s cubic-bezier(.22,1,.36,1)">
+        <span style="font-size:34px;color:var(--green)">✓</span>
+      </div>
+      <div style="font-size:24px;font-weight:600">Done.</div>
+      <div style="font-size:14px;color:var(--soft)">${esc(S.doneNote)}</div>
+    </div>`;
+}
+
+function renderHistory(){
+  const yes=S.history.filter(c=>c.answer==='yes').length;
+  const no=S.history.filter(c=>c.answer==='no').length;
+  const other=S.history.length-yes-no;
+  const total=S.history.length||1;
+  const pct=Math.round((yes+other)/total*100);
+  const C=2*Math.PI*52;
+  $screen.innerHTML = `
+    <div class="fadein" style="padding-top:6px">
+      <div style="font-size:24px;font-weight:600;letter-spacing:-.02em">History</div>
+      <div style="font-size:14.5px;color:var(--soft);margin-top:4px;margin-bottom:26px">Your commitment loop.</div>
+      <div style="display:flex;justify-content:center;margin-bottom:26px">
+        <div style="position:relative;width:150px;height:150px">
+          <svg width="150" height="150" viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="7"/>
+            <circle cx="60" cy="60" r="52" fill="none" stroke="#8B8DF6" stroke-width="7" stroke-linecap="round"
+              stroke-dasharray="${C}" stroke-dashoffset="${C*(1-pct/100)}" transform="rotate(-90 60 60)"
+              style="filter:drop-shadow(0 0 8px rgba(139,141,246,.4))"/>
+          </svg>
+          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
+            <div style="font-size:30px;font-weight:700;letter-spacing:-.02em">${S.history.length?pct:0}%</div>
+            <div style="font-size:11px;color:var(--faint);letter-spacing:.08em">FOLLOW-THROUGH</div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-bottom:26px">
+        <div class="glass" style="flex:1;text-align:center;padding:14px 8px">
+          <div style="font-size:22px;font-weight:700;color:var(--green)">${yes}</div>
+          <div style="font-size:11.5px;color:var(--faint);margin-top:2px">Yes</div></div>
+        <div class="glass" style="flex:1;text-align:center;padding:14px 8px">
+          <div style="font-size:22px;font-weight:700;color:var(--coral)">${no}</div>
+          <div style="font-size:11.5px;color:var(--faint);margin-top:2px">No</div></div>
+        <div class="glass" style="flex:1;text-align:center;padding:14px 8px">
+          <div style="font-size:22px;font-weight:700;color:var(--indigo)">${other}</div>
+          <div style="font-size:11.5px;color:var(--faint);margin-top:2px">Decisions</div></div>
+      </div>
+      <div class="eyebrow">Recent</div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:14px">
+        ${S.history.slice(0,20).map(c=>`
+          <div class="glass" style="padding:15px 16px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              ${chip(c.agent)}
+              <span style="font-size:12px;font-weight:700;color:${c.answer==='yes'?'var(--green)':c.answer==='no'?'var(--coral)':'var(--indigo)'}">
+                ${esc((c.answer||'').toUpperCase())}</span>
+            </div>
+            <div style="font-size:14.5px;color:var(--soft);margin-top:10px;line-height:1.4">${esc(c.question)}</div>
+            ${c.answer_reason?`<div style="font-size:12.5px;color:var(--faint);margin-top:6px">"${esc(c.answer_reason)}"</div>`:''}
+          </div>`).join('') || '<div style="color:var(--faint);font-size:14px">Nothing answered yet.</div>'}
+      </div>
+    </div>`;
+}
+
+/* ---------------- boot ---------------- */
+if(!S.key){ S.view='setup'; render(); }
+else startPolling();
+document.addEventListener('visibilitychange', ()=>{ if(!document.hidden && S.key) refresh(); });
+</script>
+</body>
+</html>

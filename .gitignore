@@ -1,0 +1,9 @@
+checkpoints.db
+__pycache__/
+*.pyc
+.venv/
+.idea/
+.vscode/
+*.egg-info/
+.env
+.DS_Store
