@@ -6,7 +6,7 @@ Agents POST questions here. Your phone answers them. Agents poll for the answer.
 Run locally:   python main.py          (then open http://YOUR-COMPUTER-IP:8000 on your phone)
 Deploy:        works as-is on Render / Railway / Fly (start command: python main.py)
 
-Auth: set the CHECKPOINT_KEY environment variable (defaults to the fleet key).
+Auth: set the CHECKPOINT_KEY environment variable (defaults to "gbiE5wRBcgdhuhgnpHBSHRbSc67iQgRH9-jIV8Pa_mk").
 Both your agents and your phone use this same key.
 """
 

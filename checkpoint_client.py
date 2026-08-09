@@ -39,7 +39,7 @@ import time
 import requests
 
 BASE = os.environ.get("CHECKPOINT_URL", "http://localhost:8000").rstrip("/")
-KEY = os.environ.get("CHECKPOINT_KEY", "gbiE5wRBcgdhuhgnpHBSHRbSc67iQgRH9-jIV8Pa_mk")
+KEY = os.environ.get("CHECKPOINT_KEY", "change-me")
 HEADERS = {"X-API-Key": KEY}
 
 
