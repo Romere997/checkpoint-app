@@ -53,18 +53,18 @@ Connect once with your API key; the app stores it in localStorage.
 
 ![Setup screen](docs/images/hero-setup.png)
 
-### Core workflow — approve-style question
-Nano asks about 3 failed crons. Custom options appear as tappable buttons. The
-"UP NEXT" card shows there is another decision queued behind this one.
+### Core workflow — verify question with UP NEXT queue
+Nano asks a connectivity check. The "UP NEXT" card shows another decision
+queued behind this one. Agent-colored chip and notification badge keep the
+fleet visible at a glance.
 
-![Approve workflow](docs/images/core-workflow-approve.png)
+![Verify workflow — UP NEXT queue](docs/images/up-next-queue.png)
 
-### Reason prompt — agent learns from your No
-When you tap "No," the agent surfaces a reason prompt ("What got in the way?")
-so your follow-up explanation goes back to the asking agent, not just the
-gateway.
+### Core workflow — verify question
+Yes/No buttons, agent chip, context subtitle, and the UP NEXT queue showing
+how many more decisions are waiting. This is the most common screen in daily use.
 
-![Reason prompt](docs/images/reason-prompt.png)
+![Core workflow — verify question with agent badge](docs/images/core-workflow-verify.png)
 
 ## Core Features
 
