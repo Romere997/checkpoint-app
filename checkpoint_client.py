@@ -6,7 +6,7 @@ until you answer on your phone, then gets the answer + your reason back.
 
 Setup:
     export CHECKPOINT_URL="https://your-app.onrender.com"   # or http://localhost:8000
-    export CHECKPOINT_KEY="gbiE5wRBcgdhuhgnpHBSHRbSc67iQgRH9-jIV8Pa_mk"
+    export CHECKPOINT_KEY="your-secret-key"
 
 Usage from an agent:
 
@@ -67,6 +67,25 @@ def ask_human_async(agent, question, kind="verify", options=None, context="",
 def check_answer(checkpoint_id):
     """Return the checkpoint dict; status is 'pending' or 'answered'."""
     r = requests.get(f"{BASE}/api/checkpoints/{checkpoint_id}", headers=HEADERS, timeout=15)
+    r.raise_for_status()
+    return r.json()
+
+
+def delete_brain_dump(brain_dump_id):
+    """Delete a brain dump by id. Returns {"ok": True}."""
+    r = requests.delete(f"{BASE}/api/brain-dumps/{brain_dump_id}", headers=HEADERS, timeout=15)
+    r.raise_for_status()
+    return r.json()
+
+
+def kill_brain_dump(brain_dump_id):
+    """Mark a brain dump as killed instead of deleting it. Returns updated dump."""
+    r = requests.patch(
+        f"{BASE}/api/brain-dumps/{brain_dump_id}",
+        headers=HEADERS,
+        timeout=15,
+        json={"status": "killed"},
+    )
     r.raise_for_status()
     return r.json()
 
