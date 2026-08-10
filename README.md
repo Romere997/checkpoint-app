@@ -101,7 +101,8 @@ No Python needed? It's plain HTTP:
 
 ```bash
 curl -X POST https://your-url/api/checkpoints \
-  -H "X-API-Key: your-key" -H "Content-Type: application/json" \
+  -H "X-API-Key: your-secret-key" \
+  -H "Content-Type: application/json" \
   -d '{"agent":"Nano","question":"Approve the Teams digest send?","kind":"approve","options":["Send","Hold"]}'
 ```
 

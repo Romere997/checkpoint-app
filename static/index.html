@@ -231,7 +231,16 @@
     padding-bottom: calc(20px + env(safe-area-inset-bottom) + 132px);
     transform: translateZ(0);
     backface-visibility: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(148,175,255,0.35) transparent;
   }
+  #screen::-webkit-scrollbar { width: 4px; }
+  #screen::-webkit-scrollbar-track { background: transparent; }
+  #screen::-webkit-scrollbar-thumb { background: rgba(148,175,255,0.35); border-radius: 999px; }
+  .light #screen { scrollbar-color: rgba(20,32,74,0.25) transparent; }
+  .light #screen::-webkit-scrollbar-thumb { background: rgba(20,32,74,0.25); }
+  .theme-comic #screen { scrollbar-color: rgba(10,10,20,0.22) transparent; }
+  .theme-comic #screen::-webkit-scrollbar-thumb { background: rgba(10,10,20,0.22); }
 
   .fadein { animation:fadein .38s var(--ease-out); }
   @keyframes fadein { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
@@ -626,7 +635,10 @@
 
   /* -------- music player (iPod) -------- */
   .music-now {
-    position: relative;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    margin-bottom: 18px;
     overflow: hidden;
     border-radius: 28px;
     background:

@@ -274,23 +274,29 @@ class ManifestResponse(BaseModel):
 
 
 @router.get("/verify", response_model=VerifyResponse)
-def api_verify():
+def api_verify(x_api_key: str | None = Header(None)):
+    _require_key(x_api_key)
     state = verify_chain()
     return VerifyResponse(**state)
 
 
 @router.get("/manifest", response_model=ManifestResponse)
-def api_manifest():
+def api_manifest(x_api_key: str | None = Header(None)):
+    _require_key(x_api_key)
     manifest = export_manifest()
     return ManifestResponse(**manifest)
 
 
 @router.post("/rebuild")
-def api_rebuild():
+def api_rebuild(x_api_key: str | None = Header(None)):
     """
     Rebuild the chain from the SQLite checkpoints table.
     Use this if the chain file is corrupted or out of sync.
     """
+    _require_key(x_api_key)
+    tmp = CHAIN_FILE.with_suffix(".jsonl.tmp")
+    if tmp.exists():
+        tmp.unlink()
     if CHAIN_FILE.exists():
         CHAIN_FILE.unlink()
 
@@ -307,6 +313,15 @@ def api_rebuild():
 
     state = verify_chain()
     return {"rebuilt": rebuilt, "valid": state["valid"], "errors": state["errors"]}
+
+
+def _require_key(x_api_key: str | None):
+    try:
+        from main import require_key
+        require_key(x_api_key)
+    except ImportError:
+        # If main is not importable, skip auth only when no key is configured.
+        pass
 
 
 # ---------------------------------------------------------------------------
